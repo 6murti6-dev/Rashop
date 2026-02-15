@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>shopmu</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+background: linear-gradient(135deg,#000000,#021a0f,#003322);
+color:white;
+}
+
+/* NAVBAR */
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+background:#0a0a0a;
+box-shadow:0 0 20px #00ff88;
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+color:#00ff88;
+}
+
+.nav-links{
+display:flex;
+gap:20px;
+}
+
+.nav-links a{
+text-decoration:none;
+color:white;
+transition:0.3s;
+}
+
+.nav-links a:hover{
+color:#00ff88;
+}
+
+/* HERO */
+.hero{
+margin:30px auto;
+width:90%;
+background:linear-gradient(90deg,#111,#003322);
+border-radius:15px;
+padding:40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 0 40px #00ff88;
+}
+
+.hero-text h1{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.hero-text p{
+opacity:0.8;
+}
+
+.hero button{
+margin-top:15px;
+padding:10px 20px;
+background:#00ff88;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+
+/* MARKETPLACE SECTION */
+.marketplace{
+width:90%;
+margin:20px auto;
+}
+
+.marketplace h2{
+margin-bottom:20px;
+}
+
+/* PRODUCT CARD */
+.products{
+display:flex;
+gap:20px;
+overflow-x:auto;
+padding-bottom:20px;
+}
+
+.card{
+min-width:230px;
+background:#111;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 0 15px #00ff88;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.card img{
+width:100%;
+height:140px;
+object-fit:cover;
+}
+
+.card-content{
+padding:15px;
+}
+
+.card-title{
+font-size:15px;
+margin-bottom:8px;
+}
+
+.price{
+color:#00ff88;
+font-weight:bold;
+display:flex;
+align-items:center;
+gap:5px;
+}
+
+.diamond{
+width:18px;
+}
+
+/* SCROLLBAR */
+.products::-webkit-scrollbar{
+height:8px;
+}
+.products::-webkit-scrollbar-thumb{
+background:#00ff88;
+border-radius:10px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="navbar">
+<div class="logo">shopmu</div>
+<div class="nav-links">
+<a href="#">Marketplace</a>
+<a href="#">Top Up</a>
+<a href="#">Login</a>
+</div>
+</div>
+
+<div class="hero">
+<div class="hero-text">
+<h1>Welcome to shopmu Marketplace</h1>
+<p>Website jual beli akun & item game terpercaya.</p>
+<button>Browse Marketplace</button>
+</div>
+</div>
+
+<div class="marketplace">
+<h2>Marketplace</h2>
+<div class="products">
+
+<div class="card" onclick="openProduct('produk1')">
+<img src="https://i.imgur.com/4AiXzf8.jpeg">
+<div class="card-content">
+<div class="card-title">Nama Produk 1</div>
+<div class="price">
+<img class="diamond" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">
+2500
+</div>
+</div>
+</div>
+
+<div class="card" onclick="openProduct('produk2')">
+<img src="https://i.imgur.com/4AiXzf8.jpeg">
+<div class="card-content">
+<div class="card-title">Nama Produk 2</div>
+<div class="price">
+<img class="diamond" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">
+5000
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- TAMBAH PRODUK SENDIRI DI SINI -->
+
+<script>
+function openProduct(id){
+window.location.href = "product.html?id=" + id;
+}
+</script>
+
+</div>
+</div>
+
+</body>
+</html>
