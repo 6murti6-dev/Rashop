@@ -3,132 +3,188 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>shopmu</title>
+<title>Detail Produk - shopmu</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial, Helvetica, sans-serif;
-}
-
 body{
-background: linear-gradient(135deg,#000000,#021a0f,#003322);
+background: linear-gradient(135deg,#000,#021a0f,#003322);
 color:white;
+font-family:Arial;
+margin:0;
+padding:20px;
 }
 
-/* NAVBAR */
-.navbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 40px;
-background:#0a0a0a;
-box-shadow:0 0 20px #00ff88;
-}
-
-.logo{
-font-size:24px;
-font-weight:bold;
-color:#00ff88;
-}
-
-.nav-links{
-display:flex;
-gap:20px;
-}
-
-.nav-links a{
-text-decoration:none;
-color:white;
-transition:0.3s;
-}
-
-.nav-links a:hover{
-color:#00ff88;
-}
-
-/* HERO */
-.hero{
-margin:30px auto;
-width:90%;
-background:linear-gradient(90deg,#111,#003322);
+.container{
+max-width:900px;
+margin:auto;
+background:#111;
+padding:25px;
 border-radius:15px;
-padding:40px;
+box-shadow:0 0 30px #00ff88;
+}
+
+.slider{
+position:relative;
+overflow:hidden;
+border-radius:12px;
+}
+
+.slides{
+display:flex;
+transition:0.4s;
+}
+
+.slides img{
+width:100%;
+flex-shrink:0;
+border-radius:12px;
+}
+
+.buttons{
+position:absolute;
+top:50%;
+width:100%;
 display:flex;
 justify-content:space-between;
-align-items:center;
-box-shadow:0 0 40px #00ff88;
+transform:translateY(-50%);
 }
 
-.hero-text h1{
-font-size:28px;
-margin-bottom:10px;
-}
-
-.hero-text p{
-opacity:0.8;
-}
-
-.hero button{
-margin-top:15px;
-padding:10px 20px;
+.buttons button{
 background:#00ff88;
 border:none;
-border-radius:8px;
+padding:10px;
 cursor:pointer;
 font-weight:bold;
 }
 
-/* MARKETPLACE SECTION */
-.marketplace{
-width:90%;
-margin:20px auto;
-}
-
-.marketplace h2{
-margin-bottom:20px;
-}
-
-/* PRODUCT CARD */
-.products{
-display:flex;
-gap:20px;
-overflow-x:auto;
-padding-bottom:20px;
-}
-
-.card{
-min-width:230px;
-background:#111;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 0 15px #00ff88;
-transition:0.3s;
-}
-
-.card:hover{
-transform:translateY(-5px);
-}
-
-.card img{
-width:100%;
-height:140px;
-object-fit:cover;
-}
-
-.card-content{
-padding:15px;
-}
-
-.card-title{
-font-size:15px;
-margin-bottom:8px;
+h1{
+margin-top:20px;
 }
 
 .price{
 color:#00ff88;
+font-size:22px;
+font-weight:bold;
+margin:10px 0;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.diamond{
+width:20px;
+}
+
+.desc{
+margin-top:15px;
+opacity:0.9;
+}
+
+.pay-btn{
+margin-top:20px;
+background:#00ff88;
+border:none;
+padding:15px;
+width:100%;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.back{
+display:inline-block;
+margin-top:15px;
+color:#00ff88;
+text-decoration:none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="slider">
+<div class="slides" id="slides"></div>
+
+<div class="buttons">
+<button onclick="prevSlide()">‹</button>
+<button onclick="nextSlide()">›</button>
+</div>
+</div>
+
+<h1 id="productName"></h1>
+
+<div class="price">
+<img class="diamond" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">
+<span id="productPrice"></span>
+</div>
+
+<div class="desc" id="productDesc"></div>
+
+<button class="pay-btn" onclick="payNow()">Konfirmasi Pembayaran (QRIS Only)</button>
+
+<a href="index.html" class="back">← Kembali</a>
+
+</div>
+
+<script>
+const dataProduk = {
+produk1:{
+nama:"Nama Produk 1",
+harga:"2500 Diamond",
+deskripsi:"Ini detail lengkap produk 1. Tambahkan spesifikasi, bonus, dll.",
+gambar:[
+"https://i.imgur.com/4AiXzf8.jpeg",
+"https://i.imgur.com/4AiXzf8.jpeg",
+"https://i.imgur.com/4AiXzf8.jpeg",
+"https://i.imgur.com/4AiXzf8.jpeg",
+"https://i.imgur.com/4AiXzf8.jpeg"
+]
+}
+};
+
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+const produk = dataProduk[id];
+
+if(produk){
+document.getElementById("productName").innerText = produk.nama;
+document.getElementById("productPrice").innerText = produk.harga;
+document.getElementById("productDesc").innerText = produk.deskripsi;
+
+const slides = document.getElementById("slides");
+produk.gambar.forEach(img=>{
+slides.innerHTML += `<img src="${img}">`;
+});
+}
+
+let index = 0;
+
+function nextSlide(){
+index++;
+if(index >= produk.gambar.length) index = 0;
+updateSlide();
+}
+
+function prevSlide(){
+index--;
+if(index < 0) index = produk.gambar.length-1;
+updateSlide();
+}
+
+function updateSlide(){
+document.getElementById("slides").style.transform =
+`translateX(-${index * 100}%)`;
+}
+
+function payNow(){
+window.location.href = "ISI_LINK_QRIS_KAMU_DISINI";
+}
+</script>
+
+</body>
+</html>color:#00ff88;
 font-weight:bold;
 display:flex;
 align-items:center;
@@ -201,7 +257,7 @@ border-radius:10px;
 
 <script>
 function openProduct(id){
-window.location.href = "product.html?id=" + id;
+window.location.href = "./product.html?id=" + id;
 }
 </script>
 
