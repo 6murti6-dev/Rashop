@@ -1,268 +1,281 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Produk - shopmu</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Echo AI</title>
+    <style>
+        /* Desain Bersih & Modern */
+        :root {
+            --bg-main: #09090b;      /* Hitam pekat */
+            --bg-surface: #18181b;   /* Abu-abu gelap untuk container */
+            --primary: #3b82f6;      /* Biru modern */
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --border: #27272a;
+        }
 
-<style>
-body{
-background: linear-gradient(135deg,#000,#021a0f,#003322);
-color:white;
-font-family:Arial;
-margin:0;
-padding:20px;
-}
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-.container{
-max-width:900px;
-margin:auto;
-background:#111;
-padding:25px;
-border-radius:15px;
-box-shadow:0 0 30px #00ff88;
-}
+        body {
+            margin: 0;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+        }
 
-.slider{
-position:relative;
-overflow:hidden;
-border-radius:12px;
-}
+        /* Container menyerupai layar HP */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-surface);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+        }
 
-.slides{
-display:flex;
-transition:0.4s;
-}
+        /* Header UI */
+        header {
+            padding: 20px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--bg-surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-.slides img{
-width:100%;
-flex-shrink:0;
-border-radius:12px;
-}
+        /* Efek Glow 1: Indikator Online */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981; /* Glow khusus di sini */
+        }
 
-.buttons{
-position:absolute;
-top:50%;
-width:100%;
-display:flex;
-justify-content:space-between;
-transform:translateY(-50%);
-}
+        /* Area Chatting */
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-.buttons button{
-background:#00ff88;
-border:none;
-padding:10px;
-cursor:pointer;
-font-weight:bold;
-}
+        /* Desain Gelembung Chat (Flat, Tanpa Glow) */
+        .msg-wrapper { display: flex; width: 100%; }
+        .msg-wrapper.user { justify-content: flex-end; }
+        .msg-wrapper.ai { justify-content: flex-start; }
 
-h1{
-margin-top:20px;
-}
+        .msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
 
-.price{
-color:#00ff88;
-font-size:22px;
-font-weight:bold;
-margin:10px 0;
-display:flex;
-align-items:center;
-gap:6px;
-}
+        .msg-wrapper.user .msg {
+            background-color: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px; /* Sudut tajam khas chat */
+        }
 
-.diamond{
-width:20px;
-}
+        .msg-wrapper.ai .msg {
+            background-color: #27272a;
+            color: var(--text-main);
+            border-bottom-left-radius: 4px;
+        }
 
-.desc{
-margin-top:15px;
-opacity:0.9;
-}
+        /* Area Input */
+        .input-area {
+            padding: 16px;
+            background-color: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
 
-.pay-btn{
-margin-top:20px;
-background:#00ff88;
-border:none;
-padding:15px;
-width:100%;
-border-radius:10px;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-}
+        input {
+            flex: 1;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
 
-.back{
-display:inline-block;
-margin-top:15px;
-color:#00ff88;
-text-decoration:none;
-}
-</style>
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Efek Glow 2: Hover pada tombol kirim */
+        button:hover, button:active {
+            background-color: #2563eb;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); /* Glow saat ditekan */
+        }
+
+        button:disabled {
+            background-color: var(--border);
+            color: var(--text-muted);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .typing {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
+    <header>
+        Echo AI <div class="status-dot"></div>
+    </header>
 
-<div class="slider">
-<div class="slides" id="slides"></div>
+    <div class="chat-box" id="chat-box">
+        <div class="msg-wrapper ai">
+            <div class="msg">Halo! Saya Echo AI. Ada yang bisa saya bantu hari ini?</div>
+        </div>
+    </div>
 
-<div class="buttons">
-<button onclick="prevSlide()">‹</button>
-<button onclick="nextSlide()">›</button>
-</div>
-</div>
-
-<h1 id="productName"></h1>
-
-<div class="price">
-<img class="diamond" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">
-<span id="productPrice"></span>
-</div>
-
-<div class="desc" id="productDesc"></div>
-
-<button class="pay-btn" onclick="payNow()">Konfirmasi Pembayaran (QRIS Only)</button>
-
-<a href="index.html" class="back">← Kembali</a>
-
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Tanyakan sesuatu..." onkeypress="handleKeyPress(event)">
+        <button id="send-btn" onclick="sendMessage()">Kirim</button>
+    </div>
 </div>
 
 <script>
-const dataProduk = {
-produk1:{
-nama:"Nama Produk 1",
-harga:"2500 Diamond",
-deskripsi:"Ini detail lengkap produk 1. Tambahkan spesifikasi, bonus, dll.",
-gambar:[
-"https://i.imgur.com/4AiXzf8.jpeg",
-"https://i.imgur.com/4AiXzf8.jpeg",
-"https://i.imgur.com/4AiXzf8.jpeg",
-"https://i.imgur.com/4AiXzf8.jpeg",
-"https://i.imgur.com/4AiXzf8.jpeg"
-]
-}
-};
+    // Konfigurasi API
+    const API_KEY = "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";
+    // Menggunakan model Mistral Instruct yang sangat bagus untuk tanya jawab
+    const API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2";
 
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-const produk = dataProduk[id];
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
 
-if(produk){
-document.getElementById("productName").innerText = produk.nama;
-document.getElementById("productPrice").innerText = produk.harga;
-document.getElementById("productDesc").innerText = produk.deskripsi;
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') sendMessage();
+    }
 
-const slides = document.getElementById("slides");
-produk.gambar.forEach(img=>{
-slides.innerHTML += `<img src="${img}">`;
-});
-}
+    function appendMessage(sender, text) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `msg-wrapper ${sender}`;
+        
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'msg';
+        
+        // Membersihkan format teks (menjaga baris baru)
+        msgDiv.innerHTML = text.replace(/\n/g, '<br>');
+        
+        wrapper.appendChild(msgDiv);
+        chatBox.appendChild(wrapper);
+        
+        // Scroll otomatis ke bawah
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
-let index = 0;
+    async function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
 
-function nextSlide(){
-index++;
-if(index >= produk.gambar.length) index = 0;
-updateSlide();
-}
+        // 1. Tampilkan pesan user
+        appendMessage('user', text);
+        userInput.value = '';
+        
+        // Disable input saat AI berpikir
+        userInput.disabled = true;
+        sendBtn.disabled = true;
 
-function prevSlide(){
-index--;
-if(index < 0) index = produk.gambar.length-1;
-updateSlide();
-}
+        // Tampilkan indikator mengetik
+        const typingId = "typing-" + Date.now();
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'msg-wrapper ai';
+        typingDiv.id = typingId;
+        typingDiv.innerHTML = `<div class="msg typing">Echo AI sedang memikirkan jawaban...</div>`;
+        chatBox.appendChild(typingDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
 
-function updateSlide(){
-document.getElementById("slides").style.transform =
-`translateX(-${index * 100}%)`;
-}
+        try {
+            // Format prompt agar AI merespons sebagai asisten (Sintaks Mistral)
+            const prompt = `[INST] You are a helpful, smart assistant named Echo AI. Answer concisely. User says: ${text} [/INST]`;
 
-function payNow(){
-window.location.href = "ISI_LINK_QRIS_KAMU_DISINI";
-}
+            // 2. Kirim ke Hugging Face API
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    inputs: prompt,
+                    parameters: {
+                        max_new_tokens: 250,
+                        temperature: 0.7,
+                        return_full_text: false // Hanya kembalikan jawabannya saja
+                    }
+                }),
+            });
+
+            const result = await response.json();
+            
+            // Hapus indikator mengetik
+            document.getElementById(typingId).remove();
+
+            // 3. Tangkap dan tampilkan respons
+            if (response.ok && result && result[0]) {
+                let aiResponse = result[0].generated_text.trim();
+                appendMessage('ai', aiResponse);
+            } else if (result.error && result.error.includes("loading")) {
+                appendMessage('ai', "⚠️ *Sistem AI sedang bersiap (Loading model). Mohon tunggu sekitar 20 detik dan coba tanyakan lagi.*");
+            } else {
+                appendMessage('ai', "Maaf, terjadi kesalahan pada server. Coba lagi nanti.");
+                console.log(result);
+            }
+
+        } catch (error) {
+            document.getElementById(typingId).remove();
+            appendMessage('ai', "Gagal terhubung ke internet atau server AI.");
+            console.error(error);
+        } finally {
+            // Aktifkan kembali input
+            userInput.disabled = false;
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+    }
 </script>
-
-</body>
-</html>color:#00ff88;
-font-weight:bold;
-display:flex;
-align-items:center;
-gap:5px;
-}
-
-.diamond{
-width:18px;
-}
-
-/* SCROLLBAR */
-.products::-webkit-scrollbar{
-height:8px;
-}
-.products::-webkit-scrollbar-thumb{
-background:#00ff88;
-border-radius:10px;
-}
-
-</style>
-</head>
-<body>
-
-<div class="navbar">
-<div class="logo">shopmu</div>
-<div class="nav-links">
-<a href="#">Marketplace</a>
-<a href="#">Top Up</a>
-<a href="#">Login</a>
-</div>
-</div>
-
-<div class="hero">
-<div class="hero-text">
-<h1>Welcome to shopmu Marketplace</h1>
-<p>Website jual beli akun & item game terpercaya.</p>
-<button>Browse Marketplace</button>
-</div>
-</div>
-
-<div class="marketplace">
-<h2>Marketplace</h2>
-<div class="products">
-
-<div class="card" onclick="openProduct('produk1')">
-<img src="https://i.imgur.com/4AiXzf8.jpeg">
-<div class="card-content">
-<div class="card-title">Nama Produk 1</div>
-<div class="price">
-<img class="diamond" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">
-2500
-</div>
-</div>
-</div>
-
-<div class="card" onclick="openProduct('produk2')">
-<img src="https://i.imgur.com/4AiXzf8.jpeg">
-<div class="card-content">
-<div class="card-title">Nama Produk 2</div>
-<div class="price">
-<img class="diamond" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">
-5000
-</div>
-</div>
-</div>
-
-</div>
-
-<!-- TAMBAH PRODUK SENDIRI DI SINI -->
-
-<script>
-function openProduct(id){
-window.location.href = "./product.html?id=" + id;
-}
-</script>
-
-</div>
-</div>
 
 </body>
 </html>
