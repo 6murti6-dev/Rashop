@@ -128,13 +128,35 @@ const emptyState = (ic, title, desc, cta, ctaLabel) => `
 /* ============================================================
    LOADER — kontrol overlay (hanya saat startup)
    ============================================================ */
+let loaderPctTimer = null;
 const showLoader = (on) => {
   const el = document.getElementById("pageLoader");
   if(!el) return;
   el.classList.toggle("on", on);
   el.setAttribute("aria-hidden", on ? "false" : "true");
-};
 
+  const pctEl = document.getElementById("loaderPercent");
+  if(pctEl){
+    if(on){
+      // Animasi angka 0 → 100
+      clearInterval(loaderPctTimer);
+      let pct = 0;
+      pctEl.textContent = "0";
+      loaderPctTimer = setInterval(() => {
+        // Naik cepat lalu melambat mendekati 100
+        const step = pct < 60 ? 3 : pct < 90 ? 1.2 : 0.4;
+        pct = Math.min(99, pct + step);
+        pctEl.textContent = Math.floor(pct);
+      }, 40);
+    } else {
+      clearInterval(loaderPctTimer);
+      pctEl.textContent = "100";
+      setTimeout(() => {
+        if(loaderPctTimer === null) return;
+      }, 300);
+    }
+  }
+};
 /* ============================================================
    AUTH
    ============================================================ */
