@@ -1,5 +1,5 @@
 /* ============================================================
-   bungkusin.store — Single-file app
+   bungkusin.store — Single-file app (v2 dengan Loader + Swipe + Explore v2)
    Firebase Modular SDK · Vanilla JS ES6+
    ============================================================ */
 
@@ -124,6 +124,22 @@ const emptyState = (ic, title, desc, cta, ctaLabel) => `
     <p>${esc(desc||"")}</p>
     ${cta?`<a class="btn btn-brand" href="${cta}">${esc(ctaLabel||"Mulai")}</a>`:""}
   </div>`;
+
+/* ============================================================
+   LOADER — kontrol overlay
+   ============================================================ */
+const showLoader = (on) => {
+  const el = document.getElementById("pageLoader");
+  if(!el) return;
+  el.classList.toggle("on", on);
+  el.setAttribute("aria-hidden", on ? "false" : "true");
+};
+let loaderTimeout = null;
+const flashLoader = () => {
+  showLoader(true);
+  clearTimeout(loaderTimeout);
+  loaderTimeout = setTimeout(() => showLoader(false), 260);
+};
 
 /* ============================================================
    AUTH
@@ -462,62 +478,87 @@ views.home = (el) => {
   return () => un();
 };
 
-/* ---------- EXPLORE ---------- */
+/* ---------- EXPLORE v2 (Redesign) ---------- */
 views.explore = (el, params={}) => {
   const state = { cat: params.cat || "", sort:"new", q:"" };
+  let allProducts = [];
+
   el.innerHTML = `
-    <div class="section-head"><h2>${icon("grid")} Explore</h2></div>
-    <div class="chips mb-16" id="exp-chips"></div>
-    <div class="chips mb-16">
-      <button class="chip active" data-sort="new">Terbaru</button>
-      <button class="chip" data-sort="populer">Populer</button>
-      <button class="chip" data-sort="rating">Rating</button>
-      <button class="chip" data-sort="murah">Termurah</button>
-      <button class="chip" data-sort="mahal">Termahal</button>
+    <div class="explore-header">
+      <div class="explore-title">
+        <h1>${icon("layers")} Explore</h1>
+        <span class="explore-count" id="exp-count">—</span>
+      </div>
+      <div class="explore-filter-bar" id="exp-cats">
+        <span class="label">${icon("filter")} Kategori</span>
+      </div>
+      <div class="explore-filter-bar">
+        <span class="label">${icon("bolt")} Urutkan</span>
+        <div class="divider"></div>
+        <button class="chip active" data-sort="new">Terbaru</button>
+        <button class="chip" data-sort="populer">Terpopuler</button>
+        <button class="chip" data-sort="rating">Rating Tertinggi</button>
+        <button class="chip" data-sort="murah">Termurah</button>
+        <button class="chip" data-sort="mahal">Termahal</button>
+      </div>
     </div>
     <div id="exp-host">${skelGrid(8)}</div>`;
 
-  let all = [];
   const render = () => {
-    let list = [...all];
-    if(state.cat) list = list.filter(p=>p.category===state.cat);
+    let list = [...allProducts];
+    if(state.cat) list = list.filter(p => p.category === state.cat);
     if(state.q) list = searchProducts(list, state.q);
-    if(state.sort==="populer") list.sort((a,b)=>(b.sold||0)-(a.sold||0));
-    else if(state.sort==="rating") list.sort((a,b)=>{
+    if(state.sort === "populer") list.sort((a,b) => (b.sold||0) - (a.sold||0));
+    else if(state.sort === "rating") list.sort((a,b) => {
       const ra = a.ratingCount ? a.ratingSum/a.ratingCount : 0;
       const rb = b.ratingCount ? b.ratingSum/b.ratingCount : 0;
       return rb - ra;
     });
-    else if(state.sort==="murah") list.sort((a,b)=>(a.discountPrice??a.price)-(b.discountPrice??b.price));
-    else if(state.sort==="mahal") list.sort((a,b)=>(b.discountPrice??b.price)-(a.discountPrice??a.price));
-    else list.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    else if(state.sort === "murah") list.sort((a,b) => (a.discountPrice ?? a.price) - (b.discountPrice ?? b.price));
+    else if(state.sort === "mahal") list.sort((a,b) => (b.discountPrice ?? b.price) - (a.discountPrice ?? a.price));
+    else list.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
 
     const host = $("#exp-host"); if(!host) return;
+    const count = $("#exp-count"); if(count) count.textContent = list.length + " produk";
     host.innerHTML = list.length
       ? `<div class="grid">${list.map(productCard).join("")}</div>`
-      : emptyState("search","Tidak ada produk", state.cat?`Tidak ada produk di kategori ${state.cat}.`:"Coba ubah filter.");
+      : emptyState("search","Tidak ada produk", state.cat ? `Tidak ada produk di kategori ${state.cat}.` : "Coba ubah filter atau kata kunci.");
     bindCardActions(el);
   };
 
   subscribeCategories(cats => {
-    const host = $("#exp-chips"); if(!host) return;
-    host.innerHTML = `<button class="chip ${!state.cat?'active':''}" data-cat="">Semua</button>` +
-      cats.map(c=>`<button class="chip ${state.cat===c.name?'active':''}" data-cat="${esc(c.name)}">${esc(c.name)}</button>`).join("");
+    const host = $("#exp-cats"); if(!host) return;
+    host.innerHTML = "";
+    const label = document.createElement("span");
+    label.className = "label";
+    label.innerHTML = `${icon("filter")} Kategori`;
+    host.appendChild(label);
+
+    const divider = document.createElement("div");
+    divider.className = "divider";
+    host.appendChild(divider);
+
+    const scroller = document.createElement("div");
+    scroller.style.cssText = "display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;flex:1;padding:2px 0";
+    scroller.innerHTML = `<button class="chip ${!state.cat?'active':''}" data-cat="">Semua</button>` +
+      cats.map(c => `<button class="chip ${state.cat===c.name?'active':''}" data-cat="${esc(c.name)}">${esc(c.name)}</button>`).join("");
+    host.appendChild(scroller);
+
     host.onclick = e => {
       const b = e.target.closest("[data-cat]"); if(!b) return;
       state.cat = b.dataset.cat;
-      $$("#exp-chips .chip").forEach(x => x.classList.toggle("active", x===b));
+      scroller.querySelectorAll(".chip").forEach(x => x.classList.toggle("active", x === b));
       render();
     };
   });
 
-  $$(".chips .chip[data-sort]", el).forEach(b => b.onclick = () => {
-    $$(".chips .chip[data-sort]", el).forEach(x => x.classList.toggle("active", x===b));
+  $$("[data-sort]", el).forEach(b => b.onclick = () => {
+    $$("[data-sort]", el).forEach(x => x.classList.toggle("active", x === b));
     state.sort = b.dataset.sort;
     render();
   });
 
-  const un = subscribeProducts(list => { all = list; render(); });
+  const un = subscribeProducts(list => { allProducts = list; render(); });
   return () => un();
 };
 
@@ -1846,6 +1887,56 @@ const updateThemeIcon = () => {
 };
 
 /* ============================================================
+   SWIPE NAVIGATION — geser kanan/kiri antar menu utama
+   ============================================================ */
+const swipeRoutes = ["", "explore", "cart", "orders", "profile"];
+const setupSwipe = () => {
+  if(!("ontouchstart" in window)) return;
+  let sx = 0, sy = 0, st = 0, tracking = false;
+
+  const onStart = (e) => {
+    if(e.touches.length !== 1) return;
+    const target = e.target;
+    if(target.closest("input,textarea,select,.pd-thumbs,.chips,.filter-row,.explore-filter-bar,.tabs,.cart-list,.search-body,[data-no-swipe]")) return;
+    if(target.closest(".sidebar,.drawer,.modal,.modal-backdrop,.search-overlay")) return;
+    sx = e.touches[0].clientX;
+    sy = e.touches[0].clientY;
+    st = Date.now();
+    tracking = true;
+  };
+
+  const onEnd = (e) => {
+    if(!tracking) return;
+    tracking = false;
+    const t = e.changedTouches[0];
+    if(!t) return;
+    const dx = t.clientX - sx;
+    const dy = t.clientY - sy;
+    const dt = Date.now() - st;
+    if(dt > 700) return;
+    if(Math.abs(dx) < 70) return;
+    if(Math.abs(dy) > 55) return;
+    if(Math.abs(dx) < Math.abs(dy) * 1.6) return;
+
+    const { parts } = parseHash();
+    const current = parts[0] || "";
+    const idx = swipeRoutes.indexOf(current);
+    if(idx === -1) return;
+
+    let next = idx;
+    if(dx < 0 && idx < swipeRoutes.length - 1) next = idx + 1;
+    else if(dx > 0 && idx > 0) next = idx - 1;
+    else return;
+    if(next === idx) return;
+
+    location.hash = "#/" + swipeRoutes[next];
+  };
+
+  document.addEventListener("touchstart", onStart, { passive:true });
+  document.addEventListener("touchend", onEnd, { passive:true });
+};
+
+/* ============================================================
    ROUTER
    ============================================================ */
 let currentCleanup = null;
@@ -1889,16 +1980,16 @@ const render = async () => {
   const { parts, params } = parseHash();
   const key = parts[0] || "";
 
+  flashLoader();
+
   if(currentCleanup){ try { currentCleanup(); } catch {} currentCleanup = null; }
   if(notifUnsub){ try { notifUnsub(); } catch {} notifUnsub = null; }
 
-  // Cleanup admin onValue listeners from previous route
   if(window.__adminProductsUnsub){ window.__adminProductsUnsub(); window.__adminProductsUnsub = null; }
   if(window.__adminOrdersUnsub){ window.__adminOrdersUnsub(); window.__adminOrdersUnsub = null; }
   if(window.__adminCouponsUnsub){ window.__adminCouponsUnsub(); window.__adminCouponsUnsub = null; }
   if(window.__adminCategoriesUnsub){ window.__adminCategoriesUnsub(); window.__adminCategoriesUnsub = null; }
 
-  // Maintenance check
   try {
     const s = await getSettings();
     if(s.maintenance && !isAdmin() && key !== "login" && key !== "maintenance"){
@@ -1909,9 +2000,8 @@ const render = async () => {
   } catch {}
 
   const routeFn = routes[key];
-  let result;
   if(!routeFn){ views.notfound(app); updateActiveNav(key); lastRoute = key; return; }
-  result = routeFn(parts);
+  const result = routeFn(parts);
 
   if(typeof result === "string"){
     const view = views[result] || views.notfound;
@@ -1973,18 +2063,18 @@ const subscribeNotifBadge = () => {
    BOOTSTRAP
    ============================================================ */
 const boot = async () => {
+  showLoader(true);
   initTheme();
   setupHeader();
   setupSearch();
+  setupSwipe();
   updateBadges();
   subscribeNotifBadge();
 
   await initAuth();
 
-  // Update UI on auth change
   authListeners.add(() => {
     updateAdminVisibility();
-    // Refresh current view when login state changes (for protected pages)
     if(["checkout","orders","downloads","licenses","profile","notifications","admin"].includes(lastRoute)){
       render();
     }
@@ -1993,29 +2083,15 @@ const boot = async () => {
   window.addEventListener("hashchange", render);
   await render();
 
-  // Preload products + categories to warm caches (silent)
   subscribeProducts(()=>{});
   subscribeCategories(()=>{});
+
+  setTimeout(() => showLoader(false), 500);
 };
 
 boot().catch(err => {
   console.error("Boot error", err);
   const app = $("#app");
   if(app) app.innerHTML = emptyState("info","Gagal memuat aplikasi","Periksa koneksi internet Anda.","#/","Coba Lagi");
+  setTimeout(() => showLoader(false), 800);
 });
-
-/* ============================================================
-   DATABASE RULES (SALIN KE FIREBASE CONSOLE)
-   ============================================================
-   Letakkan di: Realtime Database → Rules
-   ----------------------------------------
-
-   ============================================================ */
-
-/* ============================================================
-   CARA MEMBUAT ADMIN:
-   1. Daftar akun lewat #/register
-   2. Buka Firebase Console → Realtime Database → users/{UID}
-   3. Ubah field "role" dari "user" menjadi "admin"
-   4. Refresh aplikasi → menu Admin muncul di Profil/Drawer
-   ============================================================ */
