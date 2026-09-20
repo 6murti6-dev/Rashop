@@ -1,281 +1,138 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Echo AI</title>
-    <style>
-        /* Desain Bersih & Modern */
-        :root {
-            --bg-main: #09090b;      /* Hitam pekat */
-            --bg-surface: #18181b;   /* Abu-abu gelap untuk container */
-            --primary: #3b82f6;      /* Biru modern */
-            --text-main: #f4f4f5;
-            --text-muted: #a1a1aa;
-            --border: #27272a;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            margin: 0;
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        /* Container menyerupai layar HP */
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            background-color: var(--bg-surface);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            border-left: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-        }
-
-        /* Header UI */
-        header {
-            padding: 20px;
-            text-align: center;
-            font-size: 1.25rem;
-            font-weight: 600;
-            border-bottom: 1px solid var(--border);
-            background-color: var(--bg-surface);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        /* Efek Glow 1: Indikator Online */
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #10b981;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #10b981; /* Glow khusus di sini */
-        }
-
-        /* Area Chatting */
-        .chat-box {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        /* Desain Gelembung Chat (Flat, Tanpa Glow) */
-        .msg-wrapper { display: flex; width: 100%; }
-        .msg-wrapper.user { justify-content: flex-end; }
-        .msg-wrapper.ai { justify-content: flex-start; }
-
-        .msg {
-            max-width: 85%;
-            padding: 12px 16px;
-            border-radius: 16px;
-            line-height: 1.5;
-            font-size: 0.95rem;
-            word-wrap: break-word;
-        }
-
-        .msg-wrapper.user .msg {
-            background-color: var(--primary);
-            color: white;
-            border-bottom-right-radius: 4px; /* Sudut tajam khas chat */
-        }
-
-        .msg-wrapper.ai .msg {
-            background-color: #27272a;
-            color: var(--text-main);
-            border-bottom-left-radius: 4px;
-        }
-
-        /* Area Input */
-        .input-area {
-            padding: 16px;
-            background-color: var(--bg-surface);
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 12px;
-        }
-
-        input {
-            flex: 1;
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 14px 16px;
-            border-radius: 12px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-        }
-
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        /* Efek Glow 2: Hover pada tombol kirim */
-        button:hover, button:active {
-            background-color: #2563eb;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); /* Glow saat ditekan */
-        }
-
-        button:disabled {
-            background-color: var(--border);
-            color: var(--text-muted);
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        .typing {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>bungkusin.store — Toko Produk Digital</title>
+<meta name="description" content="Temukan produk digital favoritmu. Template, script, tools, asset, e-book dalam satu tempat.">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='800' fill='white' text-anchor='middle'%3Eb%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-theme="dark">
 
-<div class="app-container">
-    <header>
-        Echo AI <div class="status-dot"></div>
-    </header>
+<!-- Background orbs -->
+<div class="bg-orbs" aria-hidden="true"><span></span><span></span><span></span></div>
 
-    <div class="chat-box" id="chat-box">
-        <div class="msg-wrapper ai">
-            <div class="msg">Halo! Saya Echo AI. Ada yang bisa saya bantu hari ini?</div>
-        </div>
+<!-- SVG Sprite -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V9.5z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 3h2l2.7 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L22 8H6"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 8-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3.1 6.3 7 1-5 5 1.2 7L12 18l-6.3 3.3L7 14.3l-5-5 7-1z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 4 4 5-7"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M15 8l3 3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v7c0 5 3.4 9.4 8 10 4.6-.6 8-5 8-10V5z"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M4 3h16"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></symbol>
+  <symbol id="i-fire" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s5 5 5 10a5 5 0 1 1-10 0c0-2 1-3 1-3s1 1 1 2c0-3 3-6 3-9z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-9 12h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20.59 13.41-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></symbol>
+</svg>
+
+<!-- HEADER -->
+<header class="header" id="header">
+  <div class="header-inner">
+    <a href="#/" class="logo" aria-label="bungkusin.store">
+      <video class="logo-video" autoplay muted loop playsinline preload="auto">
+        <source src="https://videotourl.com/videos/1789868723554-47939c35-9c9c-49d5-8e60-fbe75dd98637.mp4" type="video/mp4">
+      </video>
+      <span class="logo-text">bungkusin<em>.store</em></span>
+    </a>
+    <nav class="nav-desktop" aria-label="Main">
+      <a href="#/" data-nav="home">Home</a>
+      <a href="#/explore" data-nav="explore">Produk</a>
+      <a href="#/categories" data-nav="categories">Kategori</a>
+      <a href="#/promo" data-nav="promo">Promo</a>
+    </nav>
+    <button class="search-trigger" id="searchTrigger" aria-label="Cari produk">
+      <svg class="ic"><use href="#i-search"/></svg>
+      <span>Cari template, script, ebook…</span>
+      <kbd>/</kbd>
+    </button>
+    <div class="header-actions">
+      <button class="icon-btn" data-theme-toggle aria-label="Ganti tema"><svg class="ic"><use href="#i-moon"/></svg></button>
+      <a href="#/favorites" class="icon-btn" aria-label="Favorit"><svg class="ic"><use href="#i-heart"/></svg><span class="badge" id="favBadge">0</span></a>
+      <a href="#/cart" class="icon-btn" aria-label="Keranjang"><svg class="ic"><use href="#i-cart"/></svg><span class="badge" id="cartBadge">0</span></a>
+      <a href="#/notifications" class="icon-btn" aria-label="Notifikasi"><svg class="ic"><use href="#i-bell"/></svg><span class="badge" id="notifBadge">0</span></a>
+      <a href="#/profile" class="icon-btn" aria-label="Profil"><svg class="ic"><use href="#i-user"/></svg></a>
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu"><svg class="ic"><use href="#i-menu"/></svg></button>
     </div>
+  </div>
+</header>
 
-    <div class="input-area">
-        <input type="text" id="user-input" placeholder="Tanyakan sesuatu..." onkeypress="handleKeyPress(event)">
-        <button id="send-btn" onclick="sendMessage()">Kirim</button>
+<main id="app" class="app"></main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" aria-label="Mobile navigation">
+  <a href="#/" data-nav="home"><svg class="ic"><use href="#i-home"/></svg><span>Home</span></a>
+  <a href="#/explore" data-nav="explore"><svg class="ic"><use href="#i-grid"/></svg><span>Explore</span></a>
+  <a href="#/cart" data-nav="cart"><svg class="ic"><use href="#i-cart"/></svg><span>Cart</span><span class="badge" id="cartBadgeB">0</span></a>
+  <a href="#/orders" data-nav="orders"><svg class="ic"><use href="#i-box"/></svg><span>Orders</span></a>
+  <a href="#/profile" data-nav="profile"><svg class="ic"><use href="#i-user"/></svg><span>Profil</span></a>
+</nav>
+
+<!-- DRAWER -->
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-panel" role="dialog" aria-label="Menu">
+    <div class="drawer-head">
+      <div class="logo">
+        <video class="logo-video sm" autoplay muted loop playsinline><source src="https://videotourl.com/videos/1789868723554-47939c35-9c9c-49d5-8e60-fbe75dd98637.mp4" type="video/mp4"></video>
+        <span class="logo-text">bungkusin<em>.store</em></span>
+      </div>
+      <button class="icon-btn" id="drawerClose" aria-label="Tutup"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
+    <a href="#/explore" class="drawer-link"><svg class="ic"><use href="#i-grid"/></svg> Explore</a>
+    <a href="#/categories" class="drawer-link"><svg class="ic"><use href="#i-tag"/></svg> Kategori</a>
+    <a href="#/promo" class="drawer-link"><svg class="ic"><use href="#i-fire"/></svg> Promo</a>
+    <a href="#/favorites" class="drawer-link"><svg class="ic"><use href="#i-heart"/></svg> Favorit</a>
+    <a href="#/downloads" class="drawer-link"><svg class="ic"><use href="#i-download"/></svg> Download</a>
+    <a href="#/licenses" class="drawer-link"><svg class="ic"><use href="#i-key"/></svg> Lisensi</a>
+    <a href="#/orders" class="drawer-link"><svg class="ic"><use href="#i-box"/></svg> Riwayat Order</a>
+    <a href="#/help" class="drawer-link"><svg class="ic"><use href="#i-info"/></svg> Bantuan</a>
+    <a href="#/admin" class="drawer-link admin-only" hidden><svg class="ic"><use href="#i-shield"/></svg> Admin</a>
+  </div>
+</aside>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay" aria-hidden="true">
+  <div class="search-box">
+    <div class="search-input-row">
+      <svg class="ic"><use href="#i-search"/></svg>
+      <input type="text" id="searchInput" placeholder="Cari template, script, ebook…" autocomplete="off">
+      <button class="icon-btn" id="searchClose" aria-label="Tutup"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="search-body" id="searchBody"></div>
+  </div>
 </div>
 
-<script>
-    // Konfigurasi API
-    const API_KEY = "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";
-    // Menggunakan model Mistral Instruct yang sangat bagus untuk tanya jawab
-    const API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2";
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<div id="modalRoot"></div>
 
-    const chatBox = document.getElementById('chat-box');
-    const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
-
-    function handleKeyPress(e) {
-        if (e.key === 'Enter') sendMessage();
-    }
-
-    function appendMessage(sender, text) {
-        const wrapper = document.createElement('div');
-        wrapper.className = `msg-wrapper ${sender}`;
-        
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'msg';
-        
-        // Membersihkan format teks (menjaga baris baru)
-        msgDiv.innerHTML = text.replace(/\n/g, '<br>');
-        
-        wrapper.appendChild(msgDiv);
-        chatBox.appendChild(wrapper);
-        
-        // Scroll otomatis ke bawah
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    async function sendMessage() {
-        const text = userInput.value.trim();
-        if (!text) return;
-
-        // 1. Tampilkan pesan user
-        appendMessage('user', text);
-        userInput.value = '';
-        
-        // Disable input saat AI berpikir
-        userInput.disabled = true;
-        sendBtn.disabled = true;
-
-        // Tampilkan indikator mengetik
-        const typingId = "typing-" + Date.now();
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'msg-wrapper ai';
-        typingDiv.id = typingId;
-        typingDiv.innerHTML = `<div class="msg typing">Echo AI sedang memikirkan jawaban...</div>`;
-        chatBox.appendChild(typingDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-        try {
-            // Format prompt agar AI merespons sebagai asisten (Sintaks Mistral)
-            const prompt = `[INST] You are a helpful, smart assistant named Echo AI. Answer concisely. User says: ${text} [/INST]`;
-
-            // 2. Kirim ke Hugging Face API
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${API_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ 
-                    inputs: prompt,
-                    parameters: {
-                        max_new_tokens: 250,
-                        temperature: 0.7,
-                        return_full_text: false // Hanya kembalikan jawabannya saja
-                    }
-                }),
-            });
-
-            const result = await response.json();
-            
-            // Hapus indikator mengetik
-            document.getElementById(typingId).remove();
-
-            // 3. Tangkap dan tampilkan respons
-            if (response.ok && result && result[0]) {
-                let aiResponse = result[0].generated_text.trim();
-                appendMessage('ai', aiResponse);
-            } else if (result.error && result.error.includes("loading")) {
-                appendMessage('ai', "⚠️ *Sistem AI sedang bersiap (Loading model). Mohon tunggu sekitar 20 detik dan coba tanyakan lagi.*");
-            } else {
-                appendMessage('ai', "Maaf, terjadi kesalahan pada server. Coba lagi nanti.");
-                console.log(result);
-            }
-
-        } catch (error) {
-            document.getElementById(typingId).remove();
-            appendMessage('ai', "Gagal terhubung ke internet atau server AI.");
-            console.error(error);
-        } finally {
-            // Aktifkan kembali input
-            userInput.disabled = false;
-            sendBtn.disabled = false;
-            userInput.focus();
-        }
-    }
-</script>
-
+<script type="module" src="JavaScript.js"></script>
 </body>
-</html>
+    </html>
