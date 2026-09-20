@@ -607,3 +607,336 @@ tr:hover td{background:var(--surface-2)}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
     }
+
+/* ============================================================
+   UPGRADE v2 — iOS Dock, Sidebar Desktop, Loading, Explore Rapi
+   ============================================================ */
+
+/* ---------- LOADING OVERLAY ---------- */
+.page-loader-overlay{
+  position:fixed;inset:0;z-index:9999;
+  display:grid;place-items:center;
+  background:radial-gradient(120% 120% at 50% 0%,#141a35 0%,var(--bg) 55%);
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease;
+}
+.page-loader-overlay.on{opacity:1;pointer-events:auto}
+.loader-content{display:flex;flex-direction:column;align-items:center;gap:22px}
+.loader-video-wrap{position:relative;width:88px;height:88px;display:grid;place-items:center}
+.loader-video{
+  width:72px;height:72px;border-radius:22px;object-fit:cover;
+  box-shadow:0 14px 40px -12px rgba(124,124,255,.85),0 0 0 1px rgba(255,255,255,.08);
+  animation:loaderPulse 2s ease-in-out infinite;
+  z-index:1;
+}
+@keyframes loaderPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.loader-ring{
+  position:absolute;inset:0;width:88px;height:88px;
+  transform-origin:center;
+  animation:loaderSpin 1.4s linear infinite;
+}
+.loader-ring circle{
+  fill:none;stroke:url(#none);stroke:#7c7cff;
+  stroke-width:3;stroke-linecap:round;
+  stroke-dasharray:200;stroke-dashoffset:150;
+  filter:drop-shadow(0 0 6px rgba(124,124,255,.9));
+}
+@keyframes loaderSpin{to{transform:rotate(360deg)}}
+.loader-text{font-weight:800;font-size:15px;letter-spacing:-.02em;color:var(--text)}
+.loader-text em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.loader-bar{
+  width:170px;height:3px;border-radius:99px;overflow:hidden;
+  background:rgba(255,255,255,.08);
+}
+.loader-bar span{
+  display:block;height:100%;width:40%;border-radius:99px;
+  background:var(--grad);
+  animation:loaderSlide 1.3s ease-in-out infinite;
+}
+@keyframes loaderSlide{
+  0%{transform:translateX(-100%)}
+  100%{transform:translateX(320%)}
+}
+
+/* ---------- BOTTOM NAV → iOS DOCK ---------- */
+.bottom-nav{
+  background:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  border:0!important;
+  display:flex!important;
+  justify-content:center;
+  padding:0 10px calc(10px + env(safe-area-inset-bottom,0px))!important;
+  pointer-events:none;
+}
+.bottom-nav .dock{
+  pointer-events:auto;
+  display:flex;
+  width:100%;
+  max-width:440px;
+  gap:2px;
+  padding:7px 8px;
+  background:rgba(22,26,46,.72);
+  backdrop-filter:blur(28px) saturate(180%);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:28px;
+  box-shadow:
+    0 22px 60px -22px rgba(0,0,0,.85),
+    0 0 0 1px rgba(255,255,255,.02) inset,
+    0 1px 0 0 rgba(255,255,255,.05) inset;
+}
+[data-theme="light"] .bottom-nav .dock{
+  background:rgba(255,255,255,.7);
+  border-color:rgba(15,23,42,.08);
+  box-shadow:0 22px 60px -22px rgba(15,23,42,.28),0 1px 0 0 rgba(255,255,255,.8) inset;
+}
+.bottom-nav .dock a{
+  flex:1;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:8px 4px;border-radius:20px;
+  color:var(--text-3);
+  font-size:10px;font-weight:700;
+  text-decoration:none;position:relative;
+  transition:all .22s cubic-bezier(.2,.8,.2,1);
+  min-width:0;
+}
+.bottom-nav .dock a::after{display:none!important}
+.bottom-nav .dock a .ic{
+  width:22px;height:22px;transition:transform .25s cubic-bezier(.2,.8,.2,1);
+}
+.bottom-nav .dock a.active{color:var(--text)}
+.bottom-nav .dock a.active .ic{
+  transform:translateY(-1px) scale(1.08);
+  filter:drop-shadow(0 3px 8px rgba(124,124,255,.6));
+}
+.bottom-nav .dock a.active::before{
+  content:"";
+  position:absolute;inset:0;
+  border-radius:20px;
+  background:linear-gradient(135deg,rgba(124,124,255,.22),rgba(6,182,212,.14));
+  border:1px solid rgba(124,124,255,.28);
+  z-index:-1;
+  animation:dockPop .35s cubic-bezier(.2,.9,.3,1.4);
+}
+@keyframes dockPop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.bottom-nav .badge{
+  position:absolute!important;
+  top:2px!important;
+  right:calc(50% - 20px)!important;
+  min-width:15px;height:15px;padding:0 4px;
+  border-radius:8px;background:var(--grad-2);color:#fff;
+  font-size:9px;font-weight:800;display:none;place-items:center;line-height:1;
+  box-shadow:0 3px 8px -2px rgba(244,63,94,.6);
+}
+.bottom-nav .badge.on{display:grid!important}
+
+/* Body padding bottom menyesuaikan dock */
+body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
+
+/* ---------- SIDEBAR DESKTOP ---------- */
+.sidebar{display:none}
+@media(min-width:1024px){
+  .sidebar{
+    display:flex;flex-direction:column;
+    position:fixed;top:0;left:0;bottom:0;
+    width:250px;
+    padding:20px 14px 16px;
+    background:color-mix(in srgb,var(--bg-2) 70%,transparent);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-right:1px solid var(--border);
+    z-index:45;
+    overflow-y:auto;
+  }
+  .sidebar-logo{
+    display:flex;align-items:center;gap:11px;
+    padding:8px 10px 18px;margin-bottom:6px;
+    border-bottom:1px solid var(--border);
+  }
+  .sidebar-logo .logo-text{font-size:15px}
+  .sidebar-nav{display:flex;flex-direction:column;gap:2px;flex:1}
+  .sidebar-section{
+    font-size:10.5px;font-weight:800;
+    text-transform:uppercase;letter-spacing:.09em;
+    color:var(--text-3);
+    padding:16px 12px 6px;
+  }
+  .sidebar-nav a{
+    display:flex;align-items:center;gap:12px;
+    padding:10px 12px;border-radius:11px;
+    font-size:13.5px;font-weight:600;
+    color:var(--text-2);
+    transition:all .18s;
+    position:relative;
+  }
+  .sidebar-nav a .ic{width:18px;height:18px;color:var(--text-3)}
+  .sidebar-nav a:hover{background:var(--surface-2);color:var(--text)}
+  .sidebar-nav a:hover .ic{color:var(--text)}
+  .sidebar-nav a.active{
+    background:linear-gradient(135deg,rgba(124,124,255,.18),rgba(6,182,212,.1));
+    color:var(--text);
+    box-shadow:inset 0 0 0 1px rgba(124,124,255,.24);
+  }
+  .sidebar-nav a.active .ic{color:var(--primary)}
+  .sidebar-nav a.active::before{
+    content:"";position:absolute;left:-14px;top:50%;
+    transform:translateY(-50%);
+    width:3px;height:22px;border-radius:0 3px 3px 0;
+    background:var(--grad);
+  }
+  .sidebar-foot{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:14px;margin-top:14px;
+    border-top:1px solid var(--border);
+  }
+
+  /* Shift konten & header karena sidebar */
+  body{padding-bottom:0!important;padding-left:250px}
+  .header{left:250px}
+  .header .nav-desktop{display:none!important}
+  .header .menu-btn{display:none!important}
+  .header .logo{display:none}
+  .header .search-trigger{display:flex!important;margin-left:0;max-width:520px}
+  .header-inner{max-width:none;padding:0 26px}
+  .app{max-width:none;padding:26px 26px 60px!important}
+  .bottom-nav{display:none!important}
+  .toasts{bottom:24px;left:calc(250px + (100% - 250px) / 2)!important;transform:translateX(-50%)!important}
+  .drawer{left:250px}
+  .hero h1{font-size:44px}
+}
+
+/* Header full-width di sidebar mode */
+.header{position:sticky;top:0;left:0}
+
+/* Desktop extra wide */
+@media(min-width:1280px){
+  .sidebar{width:270px}
+  body{padding-left:270px}
+  .header{left:270px}
+  .app{padding:30px 32px 70px!important}
+}
+
+/* ---------- EXPLORE PAGE — RAPI & KEREN ---------- */
+.explore-header{
+  display:flex;flex-direction:column;gap:14px;
+  margin-bottom:22px;
+}
+.explore-title{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;
+}
+.explore-title h1{
+  font-size:clamp(22px,4.4vw,30px);
+  font-weight:900;letter-spacing:-.03em;
+  display:flex;align-items:center;gap:10px;
+}
+.explore-title h1 .ic{color:var(--primary);width:26px;height:26px}
+.explore-count{
+  font-size:12.5px;font-weight:700;
+  color:var(--text-2);
+  padding:6px 12px;border-radius:10px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+}
+.explore-filter-bar{
+  display:flex;gap:10px;align-items:center;
+  padding:10px 12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  backdrop-filter:blur(14px);
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.explore-filter-bar::-webkit-scrollbar{display:none}
+.explore-filter-bar .label{
+  font-size:11px;font-weight:800;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.06em;
+  padding:0 4px;flex-shrink:0;
+}
+.explore-filter-bar .divider{
+  width:1px;height:22px;background:var(--border);flex-shrink:0;
+}
+
+/* Chip upgrade */
+.chip{
+  padding:9px 16px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  letter-spacing:-.01em;
+  border-radius:11px!important;
+  transition:all .2s cubic-bezier(.2,.8,.2,1)!important;
+}
+.chip:not(.active):hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px -8px rgba(124,124,255,.35);
+}
+.chip.active{
+  transform:translateY(-1px);
+  box-shadow:0 10px 24px -10px rgba(124,124,255,.75)!important;
+}
+
+/* Grid Explore — lebih rapi */
+.grid{gap:14px!important}
+@media(min-width:560px){.grid{gap:16px!important}}
+@media(min-width:900px){.grid{gap:18px!important}}
+
+/* ---------- DESKTOP: Card & Section lebih besar ---------- */
+@media(min-width:1024px){
+  .card-body{padding:14px 16px 16px}
+  .card-title{font-size:14.5px;min-height:2.8em}
+  .card-cat{font-size:11px}
+  .card-price .now{font-size:17px}
+  .section-head h2{font-size:20px}
+  .section{margin-bottom:36px}
+  .card:hover{transform:translateY(-6px)}
+  .hero{padding:44px 40px 40px}
+  .hero h1{font-size:48px;max-width:720px}
+  .hero p{font-size:17px;max-width:560px}
+  .hero-actions .btn{padding:13px 22px;font-size:15px}
+  .cat-grid{grid-template-columns:repeat(8,1fr);gap:14px}
+  .cat-card{padding:22px 12px}
+  .pd{gap:44px;grid-template-columns:1.2fr 1fr}
+  .pd-info h1{font-size:34px}
+  .pd-price .now{font-size:34px}
+}
+@media(min-width:1440px){
+  .hero h1{font-size:56px}
+}
+
+/* Desktop produk detail — galeri sticky */
+@media(min-width:1024px){
+  .pd-gallery{position:sticky;top:calc(var(--header-h) + 20px)}
+}
+
+/* Explore desktop — kolom lebih banyak */
+@media(min-width:1024px){
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(min-width:1440px){
+  .grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media(min-width:1800px){
+  .grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+
+/* ---------- SWIPE HINT ---------- */
+@media(max-width:1023px){
+  body[data-swipe-ready="1"]::after{
+    content:"";
+    position:fixed;top:50%;left:0;right:0;height:1px;
+    pointer-events:none;
+  }
+}
+
+/* ---------- SCROLLBAR (desktop) ---------- */
+@media(min-width:1024px){
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{
+    background:color-mix(in srgb,var(--text-3) 40%,transparent);
+    border-radius:10px;border:2px solid transparent;background-clip:padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--text-3) 70%,transparent);background-clip:padding-box}
+}
