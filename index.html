@@ -16,17 +16,57 @@
 
 <!-- LOADER — langsung tampil saat halaman dibuka -->
 <div id="pageLoader" class="page-loader-overlay on" aria-hidden="false">
+  <div class="loader-bg-orbs">
+    <span></span><span></span><span></span>
+  </div>
   <div class="loader-content">
     <div class="loader-video-wrap">
+      <svg class="loader-ring" viewBox="0 0 120 120">
+        <defs>
+          <linearGradient id="loaderGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#6366f1"/>
+            <stop offset="50%" stop-color="#a855f7"/>
+            <stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-track" cx="60" cy="60" r="54"/>
+        <circle class="ring-progress" cx="60" cy="60" r="54"/>
+      </svg>
+      <div class="loader-orbit">
+        <span class="orbit-dot dot-1"></span>
+        <span class="orbit-dot dot-2"></span>
+      </div>
       <video class="loader-video" autoplay muted loop playsinline preload="auto">
         <source src="https://videotourl.com/videos/1789868723554-47939c35-9c9c-49d5-8e60-fbe75dd98637.mp4" type="video/mp4">
       </video>
-      <svg class="loader-ring" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="46"/>
-      </svg>
+      <span class="loader-spark spark-1"></span>
+      <span class="loader-spark spark-2"></span>
+      <span class="loader-spark spark-3"></span>
     </div>
-    <div class="loader-text">bungkusin<em>.store</em></div>
-    <div class="loader-bar"><span></span></div>
+    <div class="loader-text">
+      <span class="ltr" style="--d:0">b</span>
+      <span class="ltr" style="--d:1">u</span>
+      <span class="ltr" style="--d:2">n</span>
+      <span class="ltr" style="--d:3">g</span>
+      <span class="ltr" style="--d:4">k</span>
+      <span class="ltr" style="--d:5">u</span>
+      <span class="ltr" style="--d:6">s</span>
+      <span class="ltr" style="--d:7">i</span>
+      <span class="ltr" style="--d:8">n</span>
+      <em>
+        <span class="ltr" style="--d:9">.</span>
+        <span class="ltr" style="--d:10">s</span>
+        <span class="ltr" style="--d:11">t</span>
+        <span class="ltr" style="--d:12">o</span>
+        <span class="ltr" style="--d:13">r</span>
+        <span class="ltr" style="--d:14">e</span>
+      </em>
+    </div>
+    <div class="loader-bar">
+      <span></span>
+      <i class="loader-glow"></i>
+    </div>
+    <div class="loader-percent"><b id="loaderPercent">0</b><span>%</span></div>
   </div>
 </div>
 
