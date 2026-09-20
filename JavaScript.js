@@ -1,5 +1,5 @@
 /* ============================================================
-   bungkusin.store — Single-file app (v2 dengan Loader + Swipe + Explore v2)
+   bungkusin.store — Single-file app (v2.2)
    Firebase Modular SDK · Vanilla JS ES6+
    ============================================================ */
 
@@ -126,19 +126,13 @@ const emptyState = (ic, title, desc, cta, ctaLabel) => `
   </div>`;
 
 /* ============================================================
-   LOADER — kontrol overlay
+   LOADER — kontrol overlay (hanya saat startup)
    ============================================================ */
 const showLoader = (on) => {
   const el = document.getElementById("pageLoader");
   if(!el) return;
   el.classList.toggle("on", on);
   el.setAttribute("aria-hidden", on ? "false" : "true");
-};
-let loaderTimeout = null;
-const flashLoader = () => {
-  showLoader(true);
-  clearTimeout(loaderTimeout);
-  loaderTimeout = setTimeout(() => showLoader(false), 260);
 };
 
 /* ============================================================
@@ -344,16 +338,54 @@ const getProduct = async (id) => {
   catch { return null; }
 };
 
+/* --- SEARCH: pencocokan multi-field dengan skor --- */
 const searchProducts = (list, q) => {
   if(!q) return list;
-  const t = q.toLowerCase().trim();
-  return list.filter(p =>
-    (p.name||"").toLowerCase().includes(t) ||
-    (p.category||"").toLowerCase().includes(t) ||
-    (p.description||"").toLowerCase().includes(t) ||
-    (p.author||"").toLowerCase().includes(t) ||
-    (p.tags||[]).some(x => String(x).toLowerCase().includes(t))
-  );
+  const raw = q.toLowerCase().trim();
+  if(!raw) return list;
+  const terms = raw.split(/\s+/).filter(Boolean);
+
+  const scored = [];
+  for(const p of list){
+    const name = (p.name||"").toLowerCase();
+    const cat = (p.category||"").toLowerCase();
+    const desc = (p.description||"").toLowerCase();
+    const author = (p.author||"").toLowerCase();
+    const tags = (p.tags||[]).map(t => String(t).toLowerCase());
+    const contents = (p.contents||"").toLowerCase();
+    const features = (p.features||"").toLowerCase();
+
+    let score = 0;
+    let matchedAll = true;
+
+    for(const t of terms){
+      let termScore = 0;
+      if(name === t) termScore = 100;
+      else if(name.startsWith(t)) termScore = 60;
+      else if(name.includes(t)) termScore = 40;
+      if(cat === t) termScore = Math.max(termScore, 50);
+      else if(cat.includes(t)) termScore = Math.max(termScore, 25);
+      if(tags.some(x => x === t)) termScore = Math.max(termScore, 45);
+      else if(tags.some(x => x.includes(t))) termScore = Math.max(termScore, 20);
+      if(author.includes(t)) termScore = Math.max(termScore, 15);
+      if(features.includes(t)) termScore = Math.max(termScore, 12);
+      if(contents.includes(t)) termScore = Math.max(termScore, 10);
+      if(desc.includes(t)) termScore = Math.max(termScore, 8);
+
+      if(termScore === 0){ matchedAll = false; break; }
+      score += termScore;
+    }
+
+    if(matchedAll && score > 0){
+      // Bonus untuk produk populer + rating tinggi
+      score += Math.min(20, (p.sold||0) / 10);
+      if(p.ratingCount) score += (p.ratingSum/p.ratingCount) * 3;
+      scored.push({ p, score });
+    }
+  }
+
+  scored.sort((a,b) => b.score - a.score);
+  return scored.map(x => x.p);
 };
 
 /* ============================================================
@@ -478,10 +510,9 @@ views.home = (el) => {
   return () => un();
 };
 
-/* ---------- EXPLORE v2 (Redesign) ---------- */
+/* ---------- EXPLORE ---------- */
 views.explore = (el, params={}) => {
   const state = { cat: params.cat || "", sort:"new", q:"" };
-  let allProducts = [];
 
   el.innerHTML = `
     <div class="explore-header">
@@ -505,7 +536,7 @@ views.explore = (el, params={}) => {
     <div id="exp-host">${skelGrid(8)}</div>`;
 
   const render = () => {
-    let list = [...allProducts];
+    let list = [...(productsCache||[])];
     if(state.cat) list = list.filter(p => p.category === state.cat);
     if(state.q) list = searchProducts(list, state.q);
     if(state.sort === "populer") list.sort((a,b) => (b.sold||0) - (a.sold||0));
@@ -558,7 +589,7 @@ views.explore = (el, params={}) => {
     render();
   });
 
-  const un = subscribeProducts(list => { allProducts = list; render(); });
+  const un = subscribeProducts(list => { productsCache = list; render(); });
   return () => un();
 };
 
@@ -1183,7 +1214,6 @@ views.profile = (el) => {
       <a href="#/notifications">${icon("bell")} Notifikasi</a>
     </div>
     <div class="menu-list">
-      <button data-theme-toggle>${icon("moon")} Ubah Tema</button>
       <a href="#/help">${icon("info")} Bantuan</a>
       <a href="#/terms">${icon("shield")} Syarat & Ketentuan</a>
       <a href="#/privacy">${icon("shield")} Kebijakan Privasi</a>
@@ -1863,31 +1893,14 @@ const setupSearch = () => {
 };
 
 /* ============================================================
-   THEME
+   THEME — mode gelap permanen
    ============================================================ */
 const initTheme = () => {
-  const saved = store.get("theme", "dark");
-  document.body.dataset.theme = saved;
-  updateThemeIcon();
-  document.addEventListener("click", e => {
-    const btn = e.target.closest("[data-theme-toggle]");
-    if(!btn) return;
-    const cur = document.body.dataset.theme;
-    const next = cur === "dark" ? "light" : "dark";
-    document.body.dataset.theme = next;
-    store.set("theme", next);
-    updateThemeIcon();
-  });
-};
-const updateThemeIcon = () => {
-  const isDark = document.body.dataset.theme === "dark";
-  $$("[data-theme-toggle] .ic").forEach(el => {
-    el.innerHTML = `<use href="#i-${isDark?'sun':'moon'}"/>`;
-  });
+  document.body.dataset.theme = "dark";
 };
 
 /* ============================================================
-   SWIPE NAVIGATION — geser kanan/kiri antar menu utama
+   SWIPE NAVIGATION
    ============================================================ */
 const swipeRoutes = ["", "explore", "cart", "orders", "profile"];
 const setupSwipe = () => {
@@ -1980,8 +1993,6 @@ const render = async () => {
   const { parts, params } = parseHash();
   const key = parts[0] || "";
 
-  flashLoader();
-
   if(currentCleanup){ try { currentCleanup(); } catch {} currentCleanup = null; }
   if(notifUnsub){ try { notifUnsub(); } catch {} notifUnsub = null; }
 
@@ -2063,7 +2074,7 @@ const subscribeNotifBadge = () => {
    BOOTSTRAP
    ============================================================ */
 const boot = async () => {
-  showLoader(true);
+  // Loader sudah tampil dari HTML (class "on") — biarkan sampai data siap
   initTheme();
   setupHeader();
   setupSearch();
@@ -2083,15 +2094,27 @@ const boot = async () => {
   window.addEventListener("hashchange", render);
   await render();
 
-  subscribeProducts(()=>{});
+  // Reveal loader saat data produk pertama masuk
+  let revealed = false;
+  const reveal = () => {
+    if(revealed) return;
+    revealed = true;
+    showLoader(false);
+  };
+
+  subscribeProducts(() => {
+    // Sedikit delay supaya render sempat selesai
+    setTimeout(reveal, 250);
+  });
   subscribeCategories(()=>{});
 
-  setTimeout(() => showLoader(false), 500);
+  // Safety net: reveal setelah 4 detik apapun yang terjadi
+  setTimeout(reveal, 4000);
 };
 
 boot().catch(err => {
   console.error("Boot error", err);
   const app = $("#app");
   if(app) app.innerHTML = emptyState("info","Gagal memuat aplikasi","Periksa koneksi internet Anda.","#/","Coba Lagi");
-  setTimeout(() => showLoader(false), 800);
+  setTimeout(() => showLoader(false), 600);
 });
